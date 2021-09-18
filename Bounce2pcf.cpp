@@ -49,9 +49,9 @@ void Bounce2pcf::attach(PCF8574* _pcfX, uint8_t pin) {
     pcfX = _pcfX;
     this->pin = pin;
     this->interval_millis = interval_millis;
-    bool read = pcfX->read(pin);
+    bool read = pcfX->digitalRead(pin);
     state = 0;
-    if (pcfX->read(pin)) {
+    if (pcfX->digitalRead(pin)) {
         state = _BV(DEBOUNCED_STATE) | _BV(UNSTABLE_STATE);
     }
 #ifdef BOUNCE_LOCK_OUT
@@ -71,7 +71,7 @@ bool Bounce2pcf::update()
 #ifdef BOUNCE_LOCK_OUT
     state &= ~_BV(STATE_CHANGED);
     if (millis() - previous_millis >= interval_millis) {
-        bool currentState = pcfX->read(pin);
+        bool currentState = pcfX->digitalRead(pin);
         if ((bool)(state & _BV(DEBOUNCED_STATE)) != currentState) {
             previous_millis = millis();
             state ^= _BV(DEBOUNCED_STATE);
@@ -80,7 +80,7 @@ bool Bounce2pcf::update()
     }
     return state & _BV(STATE_CHANGED);
 #else
-    bool currentState = pcfX->read(pin);
+    bool currentState = pcfX->digitalRead(pin);
     state &= ~_BV(STATE_CHANGED);
 	
     if ( currentState != (bool)(state & _BV(UNSTABLE_STATE)) ) {
